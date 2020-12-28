@@ -13,20 +13,22 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Nur Hudha Haksono</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext">
     <script src="{{ asset('assets/js/require.min.js') }}"></script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- 
     <script src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.6/js/responsive.bootstrap4.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.bootstrap4.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.bootstrap4.min.css"> -->
+
+
     <link href="{{ asset('assets/css/dashboard.css') }}" rel="stylesheet" />
 
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
@@ -35,6 +37,11 @@
     <link href="{{ asset('assets/plugins/maps-google/plugin.css') }}" rel="stylesheet" />
     <script src="{{ asset('assets/plugins/maps-google/plugin.js') }}"></script>
     <script src="{{ asset('assets/plugins/input-mask/plugin.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 </head>
 
 <body class="">
@@ -84,11 +91,13 @@
                                         </div>
                                         <div class="col-md-9">
                                             <div class="form-group">
-                                                <div class="input-group">
-                                                    <input class="form-control" placeholder="Jabatan" readonly>
-                                                    <span class="input-group-append">
-                                                        <button type="button" data-toggle="modal" data-target="#modaljabatan" class="btn btn-secondary"><i class="fe fe-search"></i></button>
-                                                    </span>
+                                                <div class="input-icon mb-3">
+                                                    <select class="form-control" name="jabatan" id="jabatan">
+                                                        <option value="">-- Pilih Jabatan --</option>
+                                                        @foreach ($jabatan as $jab)
+                                                        <option value="{{ $jab->id }}">{{ $jab->jabatan }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -120,7 +129,7 @@
                                         </div>
                                         <div class="col-md-9">
                                             <div class="form-group">
-                                                <select class="form-control" name="unit-kerja">
+                                                <select class="form-control" name="redaksi">
                                                     <option value="asli">Asli</option>
                                                     <option value="tembusan">Tembusan</option>
                                                 </select>
@@ -128,7 +137,7 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <button id="simpan-data" class="btn btn-primary" type="button">Simpan</button>
+                                                <button type="button" id="simpan-data" class="btn btn-primary">Simpan</button>
                                             </div>
                                         </div>
                                         <br>
@@ -156,6 +165,15 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <tr>
+                                                                <?php foreach ($surat as $sur) { ?>
+                                                                    <td> <?php echo $sur['id']; ?> </td>
+                                                                    <td> <?php echo $sur['jabatan']; ?> </td>
+                                                                    <td> <?php echo $sur['pegawai']; ?> </td>
+                                                                    <td> <?php echo $sur['redaksi']; ?> </td>
+                                                                    <td><a class="btn btn-danger">Hapus</a></td>
+                                                            </tr>
+                                                        <?php } ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -166,7 +184,7 @@
                             </form>
                         </div>
                         <div class="col-6">
-                            <form action="" method="post" class="card">
+                            <form class="card">
                                 <div class="card-header">
                                     <h2 class="card-title">FILE SURAT</h2>
                                 </div>
@@ -201,6 +219,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -215,12 +234,28 @@
                             <div role="document" class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 id="modal_header" class="modal-title">Pilih Jabatan</h5>
+                                        <h5 id="modal_header" class="modal-title"></h5>
                                         <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><i class="dripicons-cross"></i></span></button>
                                     </div>
                                     <div class="modal-body">
                                         <form>
-                                            <button type="button" name="update_btn" class="btn btn-primary">Select</button>
+                                            <div class="form-group">
+                                                <div class="table-responsive">
+                                                    <table id="tbl_jabatan" class="table table-bordered text-nowrap table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="align-middle text-uppercase">ID</th>
+                                                                <!-- <th class="align-middle text-uppercase">No.</th> -->
+                                                                <th class="align-middle text-uppercase">Jabatan</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <button type="button" name="pilih_jabatan" class="btn btn-primary">Select</button>
                                         </form>
                                     </div>
                                 </div>
@@ -247,7 +282,7 @@
         </footer>
     </div>
     <script>
-        $(function() {
+        $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -293,24 +328,51 @@
                 });
             });
 
-            // $('#unit_kerja').on('change', function() {
-            //     var id = $(this).val();
-            //     $.ajax({
-            //         url: '/data-jabatan',
-            //         method: 'POST',
-            //         data: {
-            //             id: id
-            //         },
-            //         async: true,
-            //         dataType: 'json',
-            //         success: function(data) {
-            //             $('#city').empty();
-            //             $.each(response, function(id, name) {
-            //                 $('#city').append(new Option(name, id))
-            //             })
-            //         }
-            //     })
-            // });
+            $('#data-surat').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('data_kirim') }}",
+                    type: "GET",
+                },
+                columns: [{
+                        "data": "id",
+                        visible: false
+                    },
+                    {
+                        "data": "jabatan"
+                    },
+                    {
+                        "data": "pegawai"
+                    },
+                    {
+                        "data": "redaksi"
+                    },
+                    {
+                        "data": "hapus"
+                    },
+                ],
+                //      aligment left, right, center row dan coloumn
+                order: [
+                    ["0", "asc"]
+                ],
+                columnDefs: [{
+                        className: "text-left",
+                        targets: [0, 1]
+                    },
+                    {
+                        className: "text-center",
+                        targets: [4]
+                    },
+                    {
+                        width: "15%",
+                        targets: 1
+                    },
+                ],
+                autoWidth: false,
+                responsive: true,
+            });
+
             $("#jabatan").DataTable({
                 processing: true,
                 serverSide: true,
@@ -341,6 +403,10 @@
                 ],
                 autoWidth: false,
                 responsive: true,
+            });
+
+            $('#btn_jabatan').on('click', function(e) {
+                $('#modaljabatan').modal('show');
             });
         });
     </script>

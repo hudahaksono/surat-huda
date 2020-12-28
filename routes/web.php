@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'SuratController@index')->name('index');
-Route::get('/store', 'SuratController@store')->name('index');
+Route::get('/data-kirim', 'SuratController@list_data_kirim')->name('data_kirim');
+Route::post('/store', 'SuratController@store')->name('index');
 Route::get('/data-unit', 'SuratController@data_unit')->name('data-unit');
 
 // Route::get('/', function () {
